@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+    }
+    
+    .search-container {
+      width: 100%;
+      max-width: 500px;
+      padding: 30px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+    
+    .search-title {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+      font-size: 24px;
+    }
+    
+    .search-form {
+      display: flex;
+      overflow: hidden;
+      border-radius: 50px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .search-input {
+      flex: 1;
+      padding: 16px 24px;
+      border: none;
+      outline: none;
+      font-size: 18px;
+      color: #333;
+    }
+    
+    .search-button {
+      background: linear-gradient(45deg, #6e8efb, #a777e3);
+      color: white;
+      border: none;
+      padding: 0 30px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .search-button:hover {
+      background: linear-gradient(45deg, #5d7ee9, #9566d0);
+      transform: translateY(-2px);
+    }
+    
+    .search-input::placeholder {
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="search-container">
+    <h2 class="search-title">Busca de Produtos</h2>
+    <form method="GET" action="{% url 'buscar_produto' %}" class="search-form">
+      <input type="text" name="product" placeholder="Digite o produto" class="search-input">
+      <button type="submit" class="search-button">Buscar</button>
+    </form>
+  </div>
+</body>
+</html>

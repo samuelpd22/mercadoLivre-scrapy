@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      padding: 30px;
+    }
+    
+    .results-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 30px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+    
+    .results-title {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    
+    .search-term {
+      color: #6e8efb;
+      font-style: italic;
+    }
+    
+    .results-list {
+      list-style-type: none;
+    }
+    
+    .results-item {
+      background: white;
+      margin-bottom: 15px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      font-size: 18px;
+      color: #333;
+    }
+    
+    .results-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .results-count {
+      text-align: center;
+      margin-top: 20px;
+      color: #666;
+      font-size: 16px;
+    }
+    
+    .back-button {
+      display: block;
+      width: 200px;
+      margin: 30px auto 0;
+      padding: 12px 0;
+      background: linear-gradient(45deg, #6e8efb, #a777e3);
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .back-button:hover {
+      background: linear-gradient(45deg, #5d7ee9, #9566d0);
+      transform: translateY(-2px);
+    }
+    
+    .no-results {
+      text-align: center;
+      padding: 30px;
+      font-size: 20px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="results-container">
+    <h1 class="results-title">Resultados para "<span class="search-term">{{ product }}</span>"</h1>
+    
+    {% if titulos %}
+      <ul class="results-list">
+        {% for titulo in titulos %}
+          <li class="results-item">{{ titulo }}</li>
+        {% endfor %}
+      </ul>
+      <p class="results-count">{{ titulos|length }} resultado(s) encontrado(s)</p>
+    {% else %}
+      <p class="no-results">Nenhum resultado encontrado para "{{ product }}". Tente outra busca.</p>
+    {% endif %}
+    
+    <a href="{% url 'buscar_produto' %}" class="back-button">Nova Busca</a>
+  </div>
+</body>
+</html>
