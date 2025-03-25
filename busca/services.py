@@ -6,6 +6,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+
+from busca.exceptions.exceptions import ScrapingError, SeleniumElementNotFoundError, SeleniumTimeoutError, SeleniumWebDriverError
 from .models import Produto
 
 
@@ -13,34 +15,51 @@ class MercadoLivreScraper:
 
     #__INIT__ -> Construtor de -> MercadoLivreScraper
     def __init__(self, headless=True): # Define por Default Headless=true
-        chrome_options = webdriver.ChromeOptions()
-        if headless:
-            chrome_options.add_argument('--headless')
-        chrome_options.add_argument('--disable-notifications')
+        
+        try:
+            chrome_options = webdriver.ChromeOptions()
+            if headless:
+                chrome_options.add_argument('--headless')
+            chrome_options.add_argument('--disable-notifications')
 
-        service = Service(ChromeDriverManager().install())
-        self.driver = webdriver.Chrome(service=service, options=chrome_options)
-
+            service = Service(ChromeDriverManager().install())
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
+        
+        except Exception as e:
+            raise SeleniumWebDriverError(f"Erro ao iniciar WebDriver: {str(e)}")
+        
 
 
     def buscar_produto(self, product):
         try:
             self.driver.get("https://www.mercadolivre.com.br/")
             
-            #Vai buscar o INPUT de pesquisar
-            pesquisar = WebDriverWait(self.driver, 15).until(
-                EC.presence_of_element_located((By.XPATH, '//input[@class="nav-search-input"]'))
-            )
-            pesquisar.send_keys(product + Keys.RETURN)
+            try:
+                #Vai buscar o INPUT de pesquisar
+                pesquisar = WebDriverWait(self.driver, 15).until(
+                    EC.presence_of_element_located((By.XPATH, '//input[@class="nav-search-input"]'))
+                )
+                pesquisar.send_keys(product + Keys.RETURN)
 
+            except Exception:
+                raise SeleniumWebDriverError("Campo de pesquisa não encontrado")
+
+
+
+            try:
             #Vai buscar os "li" contendo os argumentos 
-            WebDriverWait(self.driver, 15).until(
-                EC.presence_of_element_located((By.XPATH, '//li[@class="ui-search-layout__item"]'))
-            )
+                WebDriverWait(self.driver, 15).until(
+                    EC.presence_of_element_located((By.XPATH, '//li[@class="ui-search-layout__item"]'))
+                )
+            except Exception:
+                raise SeleniumWebDriverError("Tempo de espera excedido ao buscar lista de produtos")
+
+
             #Rola para baixo 3 vezes, para que carregue as imagens
             for _ in range(3):
                 self.driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.END)
                 time.sleep(2)
+
             #Vai buscar por 10 elementos que contenham a Class Abaixo
             produtos = self.driver.find_elements(By.XPATH, '//li[@class="ui-search-layout__item"]')[:10]
 
@@ -91,13 +110,26 @@ class MercadoLivreScraper:
                     Produto.objects.create(**dados)
 
                 except Exception as e:
-                    print(f"Erro ao coletar produto: {str(e)}")
-                    continue
+                    raise ScrapingError(f"Erro ao coletar dados de um produto: {str(e)}")
 
             return lista_produtos
 
+        except SeleniumElementNotFoundError as e:
+            print(f"Erro: {str(e)}")
+            return []
+        
+        except SeleniumTimeoutError  as e:
+            print(f"Erro: {str(e)}")
+            return []
+        
+        except ScrapingError  as e:
+            print(f"Erro durante o scraping: {str(e)}")
+            return []
+        
         except Exception as e:
-            return str(e)
+            raise SeleniumWebDriverError(f"Erro inesperado ao buscar produto:{str(e)} ")
+        
+
 
         finally:
             self.driver.quit()
