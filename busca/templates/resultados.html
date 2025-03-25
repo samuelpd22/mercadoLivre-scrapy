@@ -91,19 +91,92 @@
       font-size: 20px;
       color: #666;
     }
+    
+    .produto-imagem {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-right: 20px;
+    }
+    
+    .produto-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .preco-atual {
+      font-weight: bold;
+      font-size: 20px;
+    }
+    
+    .preco-original {
+      text-decoration: line-through;
+      color: #666;
+    }
+    
+    .desconto {
+      color: #f00;
+      font-weight: bold;
+    }
+    
+    .parcelamento {
+      margin-top: 5px;
+    }
+    
+    .entregas {
+      margin-top: 5px;
+    }
+    
+    .frete-gratis {
+      color: #0f0;
+    }
+    
+    .full {
+      color: #0f0;
+    }
+    
+    .normal {
+      color: #666;
+    }
   </style>
 </head>
 <body>
   <div class="results-container">
     <h1 class="results-title">Resultados para "<span class="search-term">{{ product }}</span>"</h1>
     
-    {% if titulos %}
+    {% if produtos %}
       <ul class="results-list">
-        {% for titulo in titulos %}
-          <li class="results-item">{{ titulo }}</li>
+        {% for produto in produtos %}
+          <li class="results-item">
+            <img src="{{ produto.imagem }}" alt="{{ produto.nome }}" class="produto-imagem">
+            
+            <div class="produto-info">
+              <h2>{{ produto.nome }}</h2>
+              <div class="precos">
+                <span class="preco-atual">R$ {{ produto.preco }}</span>
+                {% if produto.preco_original %}
+                  <s class="preco-original">R$ {{ produto.preco_original }}</s>
+                  {% if produto.desconto %}
+                    <span class="desconto">{{ produto.desconto }}</span>
+                  {% endif %}
+                {% endif %}
+              </div>
+              <p class="parcelamento">{{ produto.parcelamento }}</p>
+              <div class="entregas">
+                <span class="tipo-entrega {{ produto.tipo_entrega|lower }}">{{ produto.tipo_entrega }}</span>
+                {% if produto.frete_gratis == 'Sim' %}
+                  <span class="frete-gratis">Frete Grátis</span>
+                {% else %}
+                  <span>Frete não incluso</span>
+                {% endif %}
+              </div>
+              <a href="{{ produto.link }}" target="_blank" class="ver-produto">Ver Produto Completo</a>
+            </div>
+          </li>
         {% endfor %}
       </ul>
-      <p class="results-count">{{ titulos|length }} resultado(s) encontrado(s)</p>
+      <p class="results-count">{{ produtos|length }} resultado(s) encontrado(s)</p>
     {% else %}
       <p class="no-results">Nenhum resultado encontrado para "{{ product }}". Tente outra busca.</p>
     {% endif %}
