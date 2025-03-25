@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .services import MercadoLivreScraper
+from .services.services import MercadoLivreScraper
 
 #Simplificamos o codigo, retirando responsabilidade
 def buscar_produto(request):
